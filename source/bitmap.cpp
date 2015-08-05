@@ -51,7 +51,7 @@ void Bitmap::SetPixel(uint32 x, uint32 y, uint8 r, uint8 g, uint8 b)
 Color Bitmap::GetPixel(uint32 x, uint32 y)
 {
   Color* imagePixel = GetPixelAtCoords(x, y);
-  return Color{ imagePixel->r, imagePixel->g, imagePixel->b };
+  return *imagePixel;
 }
 
 void Bitmap::Serialize(std::ostream* stream)
