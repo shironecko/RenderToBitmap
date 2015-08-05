@@ -5,9 +5,7 @@ using namespace std;
 
 int main()
 {
-  cout << "Hello, world!" << endl;
-  cout << "BitmapFileHeader: " << sizeof(BitmapFileHeader)
-       << "bytes" << endl;
-  cout << "BitmapHeader: " << sizeof(BitmapHeader)
-       << "bytes" << endl;
+  Bitmap bitmap(200, 100);
+  bitmap.SetPixel(10, 10, 255, 255, 255);
+  bitmap.Serialize(&cout);
 }
