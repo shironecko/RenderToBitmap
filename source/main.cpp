@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <cassert>
 #include "bitmap.h"
 #include "mesh.h"
 
@@ -11,24 +12,47 @@ int main()
 {
   Mesh mesh;
   mesh.Deserialize(cin);
+  int width = 800;
+  int height = 801;
+  Bitmap image(width, height);
 
-  cout << "Num vertices: " << mesh.vertices.size() << endl;
-  cout << "Num faces: " << mesh.faces.size() << endl;
+  for (uint32 i = 0; i < mesh.faces.size(); ++i) 
+  {
+    std::vector<uint32> face { mesh.faces[i].x,
+                               mesh.faces[i].y,
+                               mesh.faces[i].z };
 
-  Bitmap image(200, 100);
-  line(image, 10, 10, 40, 90, 0, 255, 0);
-  line(image, 50, 90, 20, 10, 255, 0, 0);
-  line(image, 100, 10, 190, 40, 0, 0, 255);
-  line(image, 180, 40, 90, 10, 0, 255, 255);
-  line(image, 50, 80, 80, 10, 255, 255, 0);
-  line(image, 90, 10, 60, 80, 255, 0, 255);
-  //image.Serialize(&cout);
+    for (uint32 j = 0; j < 3; ++j) 
+    {
+      Vector3<float> v0 = mesh.vertices[face[j]];
+      Vector3<float> v1 = mesh.vertices[face[(j + 1) % 3]];
+
+      int x0 = (v0.x + 1.0f) * width / 2.0f;
+      int y0 = (v0.y + 1.0f) * height / 2.0f;
+      int x1 = (v1.x + 1.0f) * width / 2.0f;
+      int y1 = (v1.y + 1.0f) * height / 2.0f;
+
+      if (x0 >= width) x0 = width - 1;
+      if (x1 >= width) x1 = width - 1;
+      if (y0 >= height) y0 = height - 1;
+      if (y1 >= height) y1 = height - 1;
+
+      line(image, x0, y0, x1, y1, 0, 0, 255);
+    }
+  }
+
+  image.Serialize(&cout);
 }
 
 void line(Bitmap& image,
           int32 x0, int32 y0, int32 x1, int32 y1,
           uint8 r, uint8 g, uint8 b) 
 {
+  assert(x0 >= 0 && x0 < image.GetWidth());
+  assert(x1 >= 0 && x1 < image.GetWidth());
+  assert(y0 >= 0 && y0 < image.GetHeight());
+  assert(y1 >= 0 && y1 < image.GetHeight());
+
   bool steep = false;
   if (abs(x0 - x1) < abs(y0 - y1)) 
   {

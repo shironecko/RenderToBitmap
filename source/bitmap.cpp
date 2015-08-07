@@ -54,6 +54,16 @@ Color Bitmap::GetPixel(uint32 x, uint32 y)
   return *imagePixel;
 }
 
+int32 Bitmap::GetWidth()
+{
+  return m_header.width;
+}
+
+int32 Bitmap::GetHeight()
+{
+  return m_header.height;
+}
+
 void Bitmap::Serialize(std::ostream* stream)
 {
   BitmapFileHeader fileHeader{};

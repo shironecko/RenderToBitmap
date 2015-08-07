@@ -57,5 +57,8 @@ public:
   void SetPixel(uint32 x, uint32 y, uint8 r, uint8 g, uint8 b);
   Color GetPixel(uint32 x, uint32 y);
 
+  int32 GetWidth();
+  int32 GetHeight();
+
   void Serialize(std::ostream* stream);
 };
