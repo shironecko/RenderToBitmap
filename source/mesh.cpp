@@ -31,7 +31,7 @@ void Mesh::Deserialize(istream& stream)
     {
       float x, y, z;
       stream >> x >> y >> z;
-      vertices.push_back(Vector3<float>(x, y, z));
+      vertices.push_back(Vector3(x, y, z));
     }
     else if (str == "f")
     {
@@ -41,7 +41,7 @@ void Mesh::Deserialize(istream& stream)
       stream >> v1;
       stream.ignore(20, ' ');
       stream >> v2;
-      faces.push_back(Vector3<uint32>(v0, v1, v2));
+      faces.push_back(array<uint32, 3> {{v0, v1, v2}});
     }
   }
 

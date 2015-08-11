@@ -1,18 +1,30 @@
 #pragma once
 
-template<typename TComponent>
-struct Vector3
+class Vector3
 {
 public:
-  TComponent x;
-  TComponent y;
-  TComponent z;
+  float x, y, z;
 
-  inline Vector3() {};
-  inline Vector3(TComponent x, TComponent y, TComponent z)
-  {
-    this->x = x;
-    this->y = y;
-    this->z = z;
-  }
+  Vector3();
+  Vector3(float x, float y, float z);
+
+  bool Equals(const Vector3& that, float epsilon) const;
+
+  float SqrLength() const;
+  float Length() const;
+  Vector3 Unit() const;
+
+  Vector3& operator+=(const Vector3& that);
+  Vector3& operator-=(const Vector3& that);
 };
+
+Vector3 Cross(const Vector3& a, const Vector3& b);
+float Dot(const Vector3& a, const Vector3& b);
+
+Vector3 operator-(const Vector3& vector);
+Vector3 operator+(Vector3 left, const Vector3& right);
+Vector3 operator-(Vector3 left, const Vector3& right);
+Vector3 operator*(const Vector3& vector, float scalar);
+Vector3 operator/(const Vector3& vector, float scalar);
+bool operator==(const Vector3& left, const Vector3& right);
+
