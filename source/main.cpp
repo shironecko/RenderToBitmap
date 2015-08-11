@@ -22,6 +22,17 @@ float triangleArea(Vector3 a,
   return sqrt(s * (s - ab) * (s - bc) * (s - ca));
 }
 
+Vector3 barycentricCoords(Vector3 p,
+                          const array<Vector3, 3>& triangle)
+{
+  float A = triangleArea(triangle[0], triangle[1], triangle[2]);
+  float x = triangleArea(triangle[1], triangle[2], p) / A;
+  float y = triangleArea(triangle[0], triangle[2], p) / A;
+  float z = 1.0f - x - y;
+
+  return Vector3(x, y, z);
+}
+
 int main()
 {
   Mesh mesh;
