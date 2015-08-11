@@ -8,6 +8,7 @@ using namespace std;
 
 void line(Bitmap& image, int32 x0, int32 y0, int32 x1, int32 y1,
           uint8 r, uint8 g, uint8 b);
+void triangle(Bitmap& image, Vector3 a, Vector3 b, Vector3 c);
 
 float triangleArea(Vector3 a,
                    Vector3 b,
@@ -105,3 +106,6 @@ void line(Bitmap& image,
   }
 }
 
+void triangle(Bitmap& image, Vector3 a, Vector3 b, Vector3 c)
+{
+}
