@@ -9,11 +9,17 @@ using namespace std;
 void line(Bitmap& image, int32 x0, int32 y0, int32 x1, int32 y1,
           uint8 r, uint8 g, uint8 b);
 
-float triangleArea(Vector3 va,
-                   Vector3 vb,
-                   Vector3 vc)
+float triangleArea(Vector3 a,
+                   Vector3 b,
+                   Vector3 c)
 {
-  float a = (vb - va).Length();
+  float ab = (b - a).Length();
+  float bc = (c - b).Length();
+  float ca = (a - c).Length();
+
+  float s = (ab + bc + ca) * 0.5f;
+
+  return sqrt(s * (s - ab) * (s - bc) * (s - ca));
 }
 
 int main()
