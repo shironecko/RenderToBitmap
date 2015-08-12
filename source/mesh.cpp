@@ -3,7 +3,7 @@
 #include <string>
 #include <limits>
 #include "types.h"
-#include "vector3.h"
+#include "vec.h"
 #include "mesh.h"
 
 using namespace std;
