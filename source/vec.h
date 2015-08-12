@@ -45,7 +45,7 @@ vec<N> operator/(const vec<N>& vector, float scalar);
 template<uint32 N>
 bool operator==(const vec<N>& left, const vec<N>& right);
 
-//*****Implementation*****//
+//*****Templates Implementation*****//
 
 template<uint32 N>
 float& vec<N>::operator [] (uint32 i)
@@ -108,16 +108,6 @@ float dot(const vec<N>& a, const vec<N>& b)
   {
     result += a[i] * b[i];
   }
-
-  return result;
-}
-
-vec<3> cross(const vec<3>& a, const vec<3>& b)
-{
-  vec<3> result;
-  result[0] = a[1] * b[2] - a[2] * b[1];
-  result[1] = a[2] * b[0] - a[0] * b[2];
-  result[2] = a[0] * b[1] - a[1] * b[0];
 
   return result;
 }
