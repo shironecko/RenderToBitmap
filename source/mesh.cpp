@@ -1,50 +1,83 @@
 #include <cassert>
 #include <istream>
 #include <string>
+#include <limits>
 #include "types.h"
 #include "vector3.h"
 #include "mesh.h"
 
 using namespace std;
 
-void Mesh::Deserialize(istream& stream)
+uint32 mesh::numVertices()
 {
+  return m_vertices.size();
+}
+
+uint32 mesh::numFaces()
+{
+  return m_faces.size();
+}
+
+vec<3> mesh::vertice(uint32 index)
+{
+  return m_vertices[index];
+}
+
+std::array<uint32, 3> mesh::face(uint32 index)
+{
+  return m_faces[index];
+}
+
+void mesh::deserialize(istream& stream)
+{
+  m_vertices.clear();
+  m_faces.clear();
   string str;
-  stream >> str >> str;
-  assert(str == "num_vertices");
-  uint32 num_vertices;
-  stream >> num_vertices;
-
-  stream >> str >> str;
-  assert(str == "num_faces");
-  uint32 num_faces;
-  stream >> num_faces;
-
-  vertices.clear();
-  vertices.reserve(num_vertices);
-  faces.clear();
-  faces.reserve(num_faces);
 
   while (stream >> str)
   {
-    if (str == "v")
+    if (str == "#")
     {
-      float x, y, z;
-      stream >> x >> y >> z;
-      vertices.push_back(Vector3(x, y, z));
+      stream >> str;
+      if (str == "numVertices")
+      {
+        uint32 vertices;
+        stream >> vertices;
+        m_vertices.reserve(vertices);
+      }
+      else if (str == "numFaces")
+      {
+        uint32 faces;
+        stream >> faces;
+        m_faces.reserve(faces);
+      }
+      else
+      {
+        stream.ignore(numeric_limits<streamsize>::max(), stream.widen('\n'));
+      }
+    }
+    else if (str == "v")
+    {
+      vec<3> vertice;
+      stream >> vertice[0] >> vertice[1] >> vertice[2];
+      m_vertices.push_back(vertice);
     }
     else if (str == "f")
     {
-      uint32 v0, v1, v2;
-      stream >> v0;
-      stream.ignore(20, ' ');
-      stream >> v1;
-      stream.ignore(20, ' ');
-      stream >> v2;
-      faces.push_back(array<uint32, 3> {{v0, v1, v2}});
+      array<uint32, 3> face;
+      stream >> face[0];
+      stream.ignore(numeric_limits<streamsize>::max(), ' ');
+      stream >> face[1];
+      stream.ignore(numeric_limits<streamsize>::max(), ' ');
+      stream >> face[2];
+      // in waveform obj vertice indexes are starting at 1
+      --face[0];
+      --face[1];
+      --face[2];
+      m_faces.push_back(face);
     }
   }
 
-  assert(vertices.size() == num_vertices);
-  assert(faces.size() == num_faces);
+  m_vertices.shrink_to_fit();
+  m_faces.shrink_to_fit();
 }

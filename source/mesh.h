@@ -4,13 +4,20 @@
 #include <vector>
 #include <array>
 #include "types.h"
-#include "vector3.h"
+#include "vec.h"
 
-class Mesh
+class mesh
 {
-public:
-  std::vector<Vector3> vertices;
-  std::vector<std::array<uint32, 3>> faces;
+private:
+  std::vector<vec<3>> m_vertices;
+  std::vector<std::array<uint32, 3>> m_faces;
 
-  void Deserialize(std::istream& stream);
+public:
+  uint32 numVertices();
+  uint32 numFaces();
+  
+  vec<3> vertice(uint32 index);
+  std::array<uint32, 3> face(uint32 index);
+
+  void deserialize(std::istream& stream);
 };
