@@ -3,6 +3,7 @@
 # the output to the feh image viewer
 mkdir ../build
 pushd ../build
-cmake ../source && make
+cmake ../source && 
+make &&
 ./RenderToBitmap < ../data/head.obj | feh --force-aliasing -
 popd
