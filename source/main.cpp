@@ -3,6 +3,7 @@
 #include <cassert>
 #include "bitmap.h"
 #include "mesh.h"
+#include "vec.h"
 
 using namespace std;
 
