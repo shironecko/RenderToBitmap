@@ -12,12 +12,12 @@ void Mesh::Deserialize(istream& stream)
   string str;
   stream >> str >> str;
   assert(str == "num_vertices");
-  int num_vertices;
+  uint32 num_vertices;
   stream >> num_vertices;
 
   stream >> str >> str;
   assert(str == "num_faces");
-  int num_faces;
+  uint32 num_faces;
   stream >> num_faces;
 
   vertices.clear();
