@@ -6,7 +6,7 @@
 // Let's make writing this stuff to a file easier for us,
 // shall we :)
 #pragma pack(push, 2)
-struct BitmapFileHeader
+struct bitmapFileHeader
 {
   uint16 type;
   uint32 fileSize;
@@ -16,7 +16,7 @@ struct BitmapFileHeader
 };
 #pragma pack(pop)
 
-struct BitmapHeader
+struct bitmapHeader
 {
   uint32 headerSize;
   int32 width;
@@ -31,34 +31,34 @@ struct BitmapHeader
   uint32 clrImportant;
 };
 
-struct Color
+struct color
 {
   uint8 b;
   uint8 g;
   uint8 r;
 };
 
-class Bitmap
+class bitmap
 {
 private:
-  BitmapHeader m_header{};
+  bitmapHeader m_header{};
   uint8* m_pixels;
   uint32 m_imageBytesNum;
   uint32 m_pitch;
   uint32 m_stride;
 
-  uint32 CoordsToOffset(uint32 x, uint32 y);
-  Color* GetPixelAtCoords(uint32 x, uint32 y);
+  uint32 coordsToOffset(uint32 x, uint32 y);
+  color* getPixelAtCoords(uint32 x, uint32 y);
 
 public:
-  Bitmap(int32 width, int32 height);
-  ~Bitmap();
+  bitmap(int32 width, int32 height);
+  ~bitmap();
 
-  void SetPixel(uint32 x, uint32 y, uint8 r, uint8 g, uint8 b);
-  Color GetPixel(uint32 x, uint32 y);
+  void setPixel(uint32 x, uint32 y, uint8 r, uint8 g, uint8 b);
+  color getPixel(uint32 x, uint32 y);
 
-  int32 GetWidth();
-  int32 GetHeight();
+  int32 width();
+  int32 height();
 
-  void Serialize(std::ostream& stream);
+  void serialize(std::ostream& stream);
 };

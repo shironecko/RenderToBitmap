@@ -4,7 +4,7 @@
 #include "types.h"
 #include "bitmap.h"
 
-Bitmap::Bitmap(int32 width, int32 height)
+bitmap::bitmap(int32 width, int32 height)
 {
   // header setup
   m_header.headerSize = sizeof(m_header);
@@ -24,51 +24,51 @@ Bitmap::Bitmap(int32 width, int32 height)
   memset(m_pixels, 0, m_imageBytesNum);
 }
 
-Bitmap::~Bitmap()
+bitmap::~bitmap()
 {
   delete[] m_pixels;
 }
 
-uint32 Bitmap::CoordsToOffset(uint32 x, uint32 y)
+uint32 bitmap::coordsToOffset(uint32 x, uint32 y)
 {
   return y * m_stride + x * m_pitch;
 }
 
-Color* Bitmap::GetPixelAtCoords(uint32 x, uint32 y)
+color* bitmap::getPixelAtCoords(uint32 x, uint32 y)
 {
-  uint32 offset = CoordsToOffset(x, y);
-  return reinterpret_cast<Color*>(m_pixels + offset);
+  uint32 offset = coordsToOffset(x, y);
+  return reinterpret_cast<color*>(m_pixels + offset);
 }
 
-void Bitmap::SetPixel(uint32 x, uint32 y, uint8 r, uint8 g, uint8 b)
+void bitmap::setPixel(uint32 x, uint32 y, uint8 r, uint8 g, uint8 b)
 {
-  Color* pixel = GetPixelAtCoords(x, y);
+  color* pixel = getPixelAtCoords(x, y);
   pixel->r = r;
   pixel->g = g;
   pixel->b = b;
 }
 
-Color Bitmap::GetPixel(uint32 x, uint32 y)
+color bitmap::getPixel(uint32 x, uint32 y)
 {
-  Color* imagePixel = GetPixelAtCoords(x, y);
+  color* imagePixel = getPixelAtCoords(x, y);
   return *imagePixel;
 }
 
-int32 Bitmap::GetWidth()
+int32 bitmap::width()
 {
   return m_header.width;
 }
 
-int32 Bitmap::GetHeight()
+int32 bitmap::height()
 {
   return m_header.height;
 }
 
-void Bitmap::Serialize(std::ostream& stream)
+void bitmap::serialize(std::ostream& stream)
 {
-  BitmapFileHeader fileHeader{};
+  bitmapFileHeader fileHeader{};
   fileHeader.type = ('M' << 8) | 'B';
-  fileHeader.offBits = sizeof(BitmapFileHeader) + sizeof(BitmapHeader);
+  fileHeader.offBits = sizeof(bitmapFileHeader) + sizeof(bitmapHeader);
   fileHeader.fileSize = fileHeader.offBits + m_imageBytesNum;
 
   stream.write(reinterpret_cast<char*>(&fileHeader), sizeof(fileHeader));

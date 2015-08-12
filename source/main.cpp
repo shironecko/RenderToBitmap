@@ -7,9 +7,9 @@
 
 using namespace std;
 
-void line(Bitmap& image, int32 x0, int32 y0, int32 x1, int32 y1,
+void line(bitmap& image, int32 x0, int32 y0, int32 x1, int32 y1,
           uint8 r, uint8 g, uint8 b);
-void triangle(Bitmap& image, vec<2> a, vec<2> b, vec<2> c);
+void triangle(bitmap& image, vec<2> a, vec<2> b, vec<2> c);
 
 template<uint32 N>
 float triangleArea(vec<N> a,
@@ -47,7 +47,7 @@ int main()
   meshToRender.deserialize(cin);
   int width = 600;
   int height = 600;
-  Bitmap image(width, height);
+  bitmap image(width, height);
 
   for (uint32 i = 0; i < meshToRender.numFaces(); ++i) 
   {
@@ -72,17 +72,17 @@ int main()
     }
   }
 
-  image.Serialize(cout);
+  image.serialize(cout);
 }
 
-void line(Bitmap& image,
+void line(bitmap& image,
           int32 x0, int32 y0, int32 x1, int32 y1,
           uint8 r, uint8 g, uint8 b) 
 {
-  assert(x0 >= 0 && x0 < image.GetWidth());
-  assert(x1 >= 0 && x1 < image.GetWidth());
-  assert(y0 >= 0 && y0 < image.GetHeight());
-  assert(y1 >= 0 && y1 < image.GetHeight());
+  assert(x0 >= 0 && x0 < image.width());
+  assert(x1 >= 0 && x1 < image.width());
+  assert(y0 >= 0 && y0 < image.height());
+  assert(y1 >= 0 && y1 < image.height());
 
   bool steep = false;
   if (abs(x0 - x1) < abs(y0 - y1)) 
@@ -104,15 +104,15 @@ void line(Bitmap& image,
     int32 y = y0 * (1.0f - t) + y1 * t;
     if (steep) 
     {
-      image.SetPixel(y, x, r, g, b);
+      image.setPixel(y, x, r, g, b);
     } 
     else 
     {
-      image.SetPixel(x, y, r, g, b);
+      image.setPixel(x, y, r, g, b);
     }
   }
 }
 
-void triangle(Bitmap& image, vec<2> a, vec<2> b, vec<2> c)
+void triangle(bitmap& image, vec<2> a, vec<2> b, vec<2> c)
 {
 }
