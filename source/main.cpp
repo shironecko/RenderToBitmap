@@ -11,8 +11,6 @@ void line(bitmap& image, int32 x0, int32 y0, int32 x1, int32 y1,
           uint8 r, uint8 g, uint8 b);
 void triangle(bitmap& image, vec<2> a, vec<2> b, vec<2> c);
 
-
-
 int main()
 {
   mesh meshToRender;

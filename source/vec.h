@@ -11,6 +11,9 @@ private:
   std::array<float, N> m_array;
 
 public:
+  vec();
+  vec(std::initializer_list<float> il);
+
   float& operator [] (uint32 i);
   float operator [] (uint32 i) const;
 
@@ -52,6 +55,33 @@ template<uint32 N>
 bool operator==(const vec<N>& left, const vec<N>& right);
 
 //*****Templates Implementation*****//
+
+template<uint32 N>
+vec<N>::vec()
+{
+  for (uint32 i = 0; i < N; ++i)
+  {
+    (*this)[i] = 0;
+  }
+}
+
+template<uint32 N>
+vec<N>::vec(std::initializer_list<float> il)
+{
+  auto ilIterator = il.begin();
+  for (uint32 i = 0; i < N; ++i)
+  {
+    if (ilIterator != il.end())
+    {
+      (*this)[i] = *ilIterator;
+      ++ilIterator;
+    }
+    else
+    {
+      (*this)[i] = 0;
+    }
+  }
+}
 
 template<uint32 N>
 float& vec<N>::operator [] (uint32 i)
@@ -138,11 +168,7 @@ vec<3> barycentricCoords(vec<N> p, const std::array<vec<N>, 3>& triangle)
   float y = triangleArea(triangle[0], triangle[2], p) / A;
   float z = 1.0f - x - y;
 
-  vec<3> result;
-  result[0] = x;
-  result[1] = y;
-  result[2] = z;
-  return result;
+  return vec<3> { x, y, z };
 }
 
 template<uint32 N>
