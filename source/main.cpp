@@ -11,35 +11,7 @@ void line(bitmap& image, int32 x0, int32 y0, int32 x1, int32 y1,
           uint8 r, uint8 g, uint8 b);
 void triangle(bitmap& image, vec<2> a, vec<2> b, vec<2> c);
 
-template<uint32 N>
-float triangleArea(vec<N> a,
-                   vec<N> b,
-                   vec<N> c)
-{
-  float ab = (b - a).length();
-  float bc = (c - b).length();
-  float ca = (a - c).length();
 
-  float s = (ab + bc + ca) * 0.5f;
-
-  return sqrt(s * (s - ab) * (s - bc) * (s - ca));
-}
-
-template<uint32 N>
-vec<3> barycentricCoords(vec<N> p,
-                          const array<vec<N>, 3>& triangle)
-{
-  float A = triangleArea(triangle[0], triangle[1], triangle[2]);
-  float x = triangleArea(triangle[1], triangle[2], p) / A;
-  float y = triangleArea(triangle[0], triangle[2], p) / A;
-  float z = 1.0f - x - y;
-
-  vec<3> result;
-  result[0] = x;
-  result[1] = y;
-  result[2] = z;
-  return result;
-}
 
 int main()
 {
