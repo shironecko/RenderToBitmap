@@ -72,7 +72,7 @@ int main()
     }
   }
 
-  image.Serialize(&cout);
+  image.Serialize(cout);
 }
 
 void line(Bitmap& image,

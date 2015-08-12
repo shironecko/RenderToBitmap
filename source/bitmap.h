@@ -60,5 +60,5 @@ public:
   int32 GetWidth();
   int32 GetHeight();
 
-  void Serialize(std::ostream* stream);
+  void Serialize(std::ostream& stream);
 };

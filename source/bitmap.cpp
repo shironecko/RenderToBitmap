@@ -64,14 +64,14 @@ int32 Bitmap::GetHeight()
   return m_header.height;
 }
 
-void Bitmap::Serialize(std::ostream* stream)
+void Bitmap::Serialize(std::ostream& stream)
 {
   BitmapFileHeader fileHeader{};
   fileHeader.type = ('M' << 8) | 'B';
   fileHeader.offBits = sizeof(BitmapFileHeader) + sizeof(BitmapHeader);
   fileHeader.fileSize = fileHeader.offBits + m_imageBytesNum;
 
-  stream->write(reinterpret_cast<char*>(&fileHeader), sizeof(fileHeader));
-  stream->write(reinterpret_cast<char*>(&m_header), sizeof(m_header));
-  stream->write(reinterpret_cast<char*>(m_pixels), m_imageBytesNum);
+  stream.write(reinterpret_cast<char*>(&fileHeader), sizeof(fileHeader));
+  stream.write(reinterpret_cast<char*>(&m_header), sizeof(m_header));
+  stream.write(reinterpret_cast<char*>(m_pixels), m_imageBytesNum);
 }
