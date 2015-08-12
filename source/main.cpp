@@ -9,7 +9,8 @@ using namespace std;
 
 void line(bitmap& image, int32 x0, int32 y0, int32 x1, int32 y1,
           uint8 r, uint8 g, uint8 b);
-void triangle(bitmap& image, vec<2> a, vec<2> b, vec<2> c);
+void triangle(bitmap& image, array<vec<2>, 3> vertices,
+              uint8 r, uint8 g, uint8 b);
 
 int main()
 {
@@ -22,24 +23,23 @@ int main()
   for (uint32 i = 0; i < meshToRender.numFaces(); ++i) 
   {
     auto face = meshToRender.face(i);
+    array<vec<2>, 3> polygon;
 
     for (uint32 j = 0; j < 3; ++j) 
     {
       vec<3> v0 = meshToRender.vertice(face[j]);
-      vec<3> v1 = meshToRender.vertice(face[(j + 1) % 3]);
 
-      int x0 = (v0[0] + 1.0f) * width / 2.0f;
-      int y0 = (v0[1] + 1.0f) * height / 2.0f;
-      int x1 = (v1[0] + 1.0f) * width / 2.0f;
-      int y1 = (v1[1] + 1.0f) * height / 2.0f;
+      int x = (v0[0] + 1.0f) * width / 2.0f;
+      int y = (v0[1] + 1.0f) * height / 2.0f;
 
-      if (x0 >= width) x0 = width - 1;
-      if (x1 >= width) x1 = width - 1;
-      if (y0 >= height) y0 = height - 1;
-      if (y1 >= height) y1 = height - 1;
+      if (x >= width) x = width - 1;
+      if (y >= height) y = height - 1;
 
-      line(image, x0, y0, x1, y1, 0, 0, 255);
+      polygon[j][0] = x;
+      polygon[j][1] = y;
     }
+
+    triangle(image, polygon, 100, 100, 100);
   }
 
   image.serialize(cout);
@@ -83,6 +83,34 @@ void line(bitmap& image,
   }
 }
 
-void triangle(bitmap& image, vec<2> a, vec<2> b, vec<2> c)
+void triangle(bitmap& image, array<vec<2>, 3> vertices,
+              uint8 r, uint8 g, uint8 b)
 {
+  // define bounding box
+  float xMin = vertices[0][0];
+  float yMin = vertices[0][1];
+  float xMax = vertices[0][0];
+  float yMax = vertices[0][1];
+
+  for (uint32 i = 1; i < 3; ++i)
+  {
+    xMin = min(xMin, vertices[i][0]);
+    yMin = min(yMin, vertices[i][1]);
+    xMax = max(xMax, vertices[i][0]);
+    yMax = max(yMax, vertices[i][1]);
+  }
+
+  for (float x = xMin; x <= xMax; ++x)
+  {
+    for (float y = yMin; y <= yMax; ++y)
+    {
+      vec<3> bc = barycentricCoords<2>(vec<2> { x, y }, vertices);
+      if (bc[0] < 0 || bc[1] < 0 || bc[2] < 0)
+      {
+        continue;
+      }
+
+      image.setPixel(x, y, r, g, b);
+    }
+  }
 }
