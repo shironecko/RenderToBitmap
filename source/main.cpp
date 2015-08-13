@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cassert>
+#include <limits>
 #include "bitmap.h"
 #include "mesh.h"
 #include "vec.h"
@@ -11,6 +12,7 @@ using namespace std;
 void line(bitmap& image, int32 x0, int32 y0, int32 x1, int32 y1,
           uint8 r, uint8 g, uint8 b);
 void triangle(bitmap& image, 
+              vector<vector<float>>& zbuffer,
               const vec3<vec3f>& vertices,
               const vec3<vec2f>& uvs,
               const vec3<vec3f>& normales,
@@ -28,6 +30,14 @@ int main()
   int height = 700;
   int depth = 255;
   bitmap image(width, height);
+  vector<vector<float>> zbuffer;
+  for (uint32 y = 0; y < height; ++y)
+  {
+    vector<float> row(width);
+    row.insert(row.begin(), width, -numeric_limits<float>::infinity());
+
+    zbuffer.push_back(row);
+  }
 
   mesh meshToRender;
   meshToRender.deserialize(cin);
@@ -71,7 +81,7 @@ int main()
       continue;
     }
 
-    triangle(image, polygon, uvs, normales, 255, 255, 255);
+    triangle(image, zbuffer, polygon, uvs, normales, 255, 255, 255);
   }
 
   image.serialize(cout);
@@ -116,6 +126,7 @@ void line(bitmap& image,
 }
 
 void triangle(bitmap& image, 
+              vector<vector<float>>& zbuffer,
               const vec3<vec3f>& vertices,
               const vec3<vec2f>& uvs,
               const vec3<vec3f>& normales,
@@ -140,16 +151,20 @@ void triangle(bitmap& image,
     for (float y = yMin; y <= yMax; ++y)
     {
       vec3f bc = barycentricCoords<2>(vec2f { x, y }, vertices);
-      if (bc[0] < 0 || bc[1] < 0 || bc[2] < 0)
+
+      float z = lerp3(bc[0], bc[1], bc[2],
+                      vertices[0].z(), vertices[1].z(),vertices[2].z());
+
+      if (bc[0] >= 0 && bc[1] >= 0 && bc[2] >= 0 && z > zbuffer[y][x])
       {
-        continue;
+        zbuffer[y][x] = z;
+
+        vec3f normale = lerp3(bc[0], bc[1], bc[2],
+                              normales[0], normales[1], normales[2]);
+        float lum = dot(normale, vec3f { 0, 0, 1.0f });
+
+        image.setPixel(x, y, r * lum, g * lum, b * lum);
       }
-
-      vec3f normale = lerp3(bc[0], bc[1], bc[2],
-                            normales[0], normales[1], normales[2]);
-      float lum = dot(normale, vec3f { 0, 0, 1.0f });
-
-      image.setPixel(x, y, r * lum, g * lum, b * lum);
     }
   }
 }
