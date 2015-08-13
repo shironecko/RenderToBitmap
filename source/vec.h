@@ -239,3 +239,8 @@ typedef vec<3, int32> vec3i;
 typedef vec<3, uint32> vec3u;
 typedef vec<3, float> vec3f;
 
+template<typename T>
+using vec2 = vec<2, T>;
+
+template<typename T>
+using vec3 = vec<3, T>;
