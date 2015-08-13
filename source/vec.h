@@ -110,10 +110,24 @@ public:
   }
 };
 
+typedef vec<2, int32> vec2i;
+typedef vec<2, uint32> vec2u;
+typedef vec<2, float> vec2f;
+
+typedef vec<3, int32> vec3i;
+typedef vec<3, uint32> vec3u;
+typedef vec<3, float> vec3f;
+
 template<typename T>
-vec<3, T> cross(const vec<3, T>& a, const vec<3, T>& b)
+using vec2 = vec<2, T>;
+
+template<typename T>
+using vec3 = vec<3, T>;
+
+template<typename T>
+vec3<T> cross(const vec3<T>& a, const vec3<T>& b)
 {
-  return vec<3, T> 
+  return vec3<T> 
   {
     a.y() * b.z() - a.z() * b.y(),
     a.z() * b.x() - a.x() * b.z(),
@@ -160,7 +174,7 @@ T triangleArea(vec<N, T> a, vec<N, T> b, vec<N, T> c)
 }
 
 template<uint32 pointN, uint32 triangleN, typename T>
-vec<3, T> barycentricCoords(vec<pointN, T> p, const std::array<vec<triangleN, T>, 3>& t)
+vec3<T> barycentricCoords(vec<pointN, T> p, const vec3<vec<triangleN, T>>& t)
 {
   static_assert(pointN >= 2, "Point dimension count is too low!");
   static_assert(triangleN >= 2, "Triangle dimension count is too low!");
@@ -171,7 +185,7 @@ vec<3, T> barycentricCoords(vec<pointN, T> p, const std::array<vec<triangleN, T>
                 ((t[1][1] - t[2][1])*(t[0][0] - t[2][0]) + (t[2][0] - t[1][0])*(t[0][1] - t[2][1]));
   float gamma = 1.0f - alpha - beta;
 
-  return vec<3, T> { alpha, beta, gamma };
+  return vec3<T> { alpha, beta, gamma };
 }
 
 template<uint32 N, typename T>
@@ -231,16 +245,3 @@ bool operator==(const vec<N, T>& left, const vec<N, T>& right)
   return true;
 }
 
-typedef vec<2, int32> vec2i;
-typedef vec<2, uint32> vec2u;
-typedef vec<2, float> vec2f;
-
-typedef vec<3, int32> vec3i;
-typedef vec<3, uint32> vec3u;
-typedef vec<3, float> vec3f;
-
-template<typename T>
-using vec2 = vec<2, T>;
-
-template<typename T>
-using vec3 = vec<3, T>;
