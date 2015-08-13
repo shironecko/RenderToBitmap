@@ -10,12 +10,12 @@ using namespace std;
 
 uint32 mesh::numVertices()
 {
-  return m_vertices.size();
+  return (uint32)m_vertices.size();
 }
 
 uint32 mesh::numFaces()
 {
-  return m_faces.size();
+  return (uint32)m_faces.size();
 }
 
 vec<3> mesh::vertice(uint32 index)
