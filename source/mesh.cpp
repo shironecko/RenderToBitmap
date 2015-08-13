@@ -23,7 +23,7 @@ vec3f mesh::vertice(uint32 index)
   return m_vertices[index];
 }
 
-std::array<uint32, 3> mesh::face(uint32 index)
+vec3<meshFace> mesh::face(uint32 index)
 {
   return m_faces[index];
 }
@@ -64,16 +64,21 @@ void mesh::deserialize(istream& stream)
     }
     else if (str == "f")
     {
-      array<uint32, 3> face;
-      stream >> face[0];
-      stream.ignore(numeric_limits<streamsize>::max(), ' ');
-      stream >> face[1];
-      stream.ignore(numeric_limits<streamsize>::max(), ' ');
-      stream >> face[2];
-      // in waveform obj vertice indexes are starting at 1
-      --face[0];
-      --face[1];
-      --face[2];
+      vec3<meshFace> face;
+      for (uint32 i = 0; i < 3; ++i)
+      {
+        stream >> face[i].v;
+        stream.ignore(numeric_limits<streamsize>::max(), '/');
+        stream >> face[i].uv;
+        stream.ignore(numeric_limits<streamsize>::max(), '/');
+        stream >> face[i].n;
+
+        // in waveform obj vertice indexes are starting at 1
+        --face[i].v;
+        --face[i].uv;
+        --face[i].n;
+      }
+
       m_faces.push_back(face);
     }
   }

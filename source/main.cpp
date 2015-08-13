@@ -31,7 +31,7 @@ int main()
 
     for (uint32 j = 0; j < 3; ++j) 
     {
-      vec3f v0 = meshToRender.vertice(face[j]);
+      vec3f v0 = meshToRender.vertice(face[j].v);
 
       int x = (v0[0] + 1.0f) * width / 2.0f;
       int y = (v0[1] + 1.0f) * height / 2.0f;
@@ -43,9 +43,9 @@ int main()
       polygon[j][1] = y;
     }
 
-    array<vec3f, 3> worldPolygon{ meshToRender.vertice(face[0]),
-                                   meshToRender.vertice(face[1]),
-                                   meshToRender.vertice(face[2]) };
+    array<vec3f, 3> worldPolygon { meshToRender.vertice(face[0].v),
+                                   meshToRender.vertice(face[1].v),
+                                   meshToRender.vertice(face[2].v) };
 
     vec3f lightDirection { 0, 0, -1.0f };
     vec3f normal = cross(worldPolygon[2] - worldPolygon[0], worldPolygon[1] - worldPolygon[0]).unit();
