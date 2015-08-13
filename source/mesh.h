@@ -17,6 +17,8 @@ class mesh
 {
 private:
   std::vector<vec3f> m_vertices;
+  std::vector<vec2f> m_uvs;
+  std::vector<vec3f> m_normales;
   std::vector<vec3<meshFace>> m_faces;
 
 public:
@@ -24,6 +26,8 @@ public:
   uint32 numFaces();
   
   vec3f vertice(uint32 index);
+  vec2f uv(uint32 index);
+  vec3f normale(uint32 index);
   vec3<meshFace> face(uint32 index);
 
   void deserialize(std::istream& stream);

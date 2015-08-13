@@ -20,17 +20,33 @@ uint32 mesh::numFaces()
 
 vec3f mesh::vertice(uint32 index)
 {
+  assert(index < numVertices());
   return m_vertices[index];
+}
+
+vec2f mesh::uv(uint32 index)
+{
+  assert(index < (uint32)m_uvs.size());
+  return m_uvs[index];
+}
+
+vec3f mesh::normale(uint32 index)
+{
+  assert(index < (uint32)m_normales.size());
+  return m_normales[index];
 }
 
 vec3<meshFace> mesh::face(uint32 index)
 {
+  assert(index < numFaces());
   return m_faces[index];
 }
 
 void mesh::deserialize(istream& stream)
 {
   m_vertices.clear();
+  m_uvs.clear();
+  m_normales.clear();
   m_faces.clear();
   string str;
 
@@ -61,6 +77,21 @@ void mesh::deserialize(istream& stream)
       vec3f vertice;
       stream >> vertice[0] >> vertice[1] >> vertice[2];
       m_vertices.push_back(vertice);
+    }
+    else if (str == "vt")
+    {
+      vec2f uv;
+      stream >> uv.x() >> uv.y();
+      stream.ignore(numeric_limits<streamsize>::max(), stream.widen('\n'));
+
+      m_uvs.push_back(uv);
+    }
+    else if (str == "vn")
+    {
+      vec3f normale;
+      stream >> normale.x() >> normale.y() >> normale.z();
+
+      m_normales.push_back(normale);
     }
     else if (str == "f")
     {
