@@ -6,7 +6,7 @@
 #include "types.h"
 
 template<uint32 N, typename T>
-struct vec
+class vec
 {
 private:
   T m_data[N];
@@ -41,6 +41,42 @@ public:
   {
     assert(i < N);
     return m_data[i];
+  }
+
+  T& x()
+  {
+    static_assert(N == 2 || N == 3, "The x() method is defined only for vectors of size 2 or 3!");
+    return (*this)[0];
+  }
+
+  T x() const
+  {
+    static_assert(N == 2 || N == 3, "The x() method is defined only for vectors of size 2 or 3!");
+    return (*this)[0];
+  }
+
+  T& y()
+  {
+    static_assert(N == 2 || N == 3, "The y() method is defined only for vectors of size 2 or 3!");
+    return (*this)[1];
+  }
+
+  T y() const
+  {
+    static_assert(N == 2 || N == 3, "The y() method is defined only for vectors of size 2 or 3!");
+    return (*this)[1];
+  }
+
+  T& z()
+  {
+    static_assert(N == 3, "The z() method is defined only for vectors of size 3!");
+    return (*this)[2];
+  }
+
+  T z() const
+  {
+    static_assert(N == 3, "The z() method is defined only for vectors of size 3!");
+    return (*this)[2];
   }
 
   T sqrLength() const
@@ -79,9 +115,9 @@ vec<3, T> cross(const vec<3, T>& a, const vec<3, T>& b)
 {
   return vec<3, T> 
   {
-    a[1] * b[2] - a[2] * b[1],
-    a[2] * b[0] - a[0] * b[2],
-    a[0] * b[1] - a[1] * b[0]
+    a.y() * b.z() - a.z() * b.y(),
+    a.z() * b.x() - a.x() * b.z(),
+    a.x() * b.y() - a.y() * b.x()
   };
 }
 
@@ -195,11 +231,11 @@ bool operator==(const vec<N, T>& left, const vec<N, T>& right)
   return true;
 }
 
-typedef struct vec<2, int32> vec2i;
-typedef struct vec<2, uint32> vec2u;
-typedef struct vec<2, float> vec2f;
+typedef vec<2, int32> vec2i;
+typedef vec<2, uint32> vec2u;
+typedef vec<2, float> vec2f;
 
-typedef struct vec<3, int32> vec3i;
-typedef struct vec<3, uint32> vec3u;
-typedef struct vec<3, float> vec3f;
+typedef vec<3, int32> vec3i;
+typedef vec<3, uint32> vec3u;
+typedef vec<3, float> vec3f;
 
