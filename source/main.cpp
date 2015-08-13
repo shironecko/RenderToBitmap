@@ -18,20 +18,6 @@ int main()
   int height = 600;
   bitmap image(width, height);
 
-  array<vec<2>, 3> polygon {{ { 0, 0 }, { 1.0f, 0 }, { 1.0f, 1.0f } }};
-  vec<3> bc = barycentricCoords(vec<2> { 0, 0 }, polygon);
-  assert(equal(bc, vec<3> { 1.0f, 0, 0 }, 0.0001f));
-  bc = barycentricCoords(vec<2> { 1.0f, 0 }, polygon);
-  assert(equal(bc, vec<3> { 0, 1.0f, 0 }, 0.0001f));
-  bc = barycentricCoords(vec<2> { 1.0f, 1.0f }, polygon);
-  assert(equal(bc, vec<3> { 0, 0, 1.0f }, 0.0001f));
-
-  bc = barycentricCoords(vec<2> { 0, 1.0f }, polygon);
-
-  triangle(image, array<vec<2>, 3> {{ { 200.0f, 200.0f }, { 400.0f, 300.0f }, { 300.0f, 500.0f } }},
-           100, 100, 200);
-
-  /*
   mesh meshToRender;
   meshToRender.deserialize(cin);
 
@@ -56,7 +42,6 @@ int main()
 
     triangle(image, polygon, 100, 100, 100);
   }
-  */
 
   image.serialize(cout);
 }

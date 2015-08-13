@@ -178,14 +178,15 @@ float triangleArea(vec<N> a, vec<N> b, vec<N> c)
 }
 
 template<uint32 N>
-vec<3> barycentricCoords(vec<N> p, const std::array<vec<N>, 3>& triangle)
+vec<3> barycentricCoords(vec<N> p, const std::array<vec<N>, 3>& t)
 {
-  float A = triangleArea(triangle[0], triangle[1], triangle[2]);
-  float x = triangleArea(triangle[1], triangle[2], p) / A;
-  float y = triangleArea(triangle[0], triangle[2], p) / A;
-  float z = 1.0f - x - y;
+  float alpha = ((t[1][1] - t[2][1])*(p[0] - t[2][0]) + (t[2][0] - t[1][0])*(p[1] - t[2][1])) /
+                ((t[1][1] - t[2][1])*(t[0][0] - t[2][0]) + (t[2][0] - t[1][0])*(t[0][1] - t[2][1]));
+  float beta =  ((t[2][1] - t[0][1])*(p[0] - t[2][0]) + (t[0][0] - t[2][0])*(p[1] - t[2][1])) /
+                ((t[1][1] - t[2][1])*(t[0][0] - t[2][0]) + (t[2][0] - t[1][0])*(t[0][1] - t[2][1]));
+  float gamma = 1.0f - alpha - beta;
 
-  return vec<3> { x, y, z };
+  return vec<3> { alpha, beta, gamma };
 }
 
 template<uint32 N>
