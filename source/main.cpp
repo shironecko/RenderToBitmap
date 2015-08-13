@@ -9,7 +9,7 @@ using namespace std;
 
 void line(bitmap& image, int32 x0, int32 y0, int32 x1, int32 y1,
           uint8 r, uint8 g, uint8 b);
-void triangle(bitmap& image, array<vec<2>, 3> vertices,
+void triangle(bitmap& image, const array<vec<3>, 3>& vertices,
               uint8 r, uint8 g, uint8 b);
 
 int main()
@@ -24,7 +24,9 @@ int main()
   for (uint32 i = 0; i < meshToRender.numFaces(); ++i) 
   {
     auto face = meshToRender.face(i);
-    array<vec<2>, 3> polygon;
+    float lightIntensity = 1.0f;
+
+    array<vec<3>, 3> polygon;
 
     for (uint32 j = 0; j < 3; ++j) 
     {
@@ -40,7 +42,19 @@ int main()
       polygon[j][1] = y;
     }
 
-    triangle(image, polygon, 100, 100, 100);
+    array<vec<3>, 3> worldPolygon{ meshToRender.vertice(face[0]),
+                                   meshToRender.vertice(face[1]),
+                                   meshToRender.vertice(face[2]) };
+
+    vec<3> lightDirection { 0, 0, -1.0f };
+    vec<3> normal = cross(worldPolygon[2] - worldPolygon[0], worldPolygon[1] - worldPolygon[0]).unit();
+    lightIntensity = dot(lightDirection, normal);
+    if (lightIntensity <= 0)
+    {
+      continue;
+    }
+
+    triangle(image, polygon, 255 * lightIntensity, 255 * lightIntensity, 255 * lightIntensity);
   }
 
   image.serialize(cout);
@@ -84,7 +98,7 @@ void line(bitmap& image,
   }
 }
 
-void triangle(bitmap& image, array<vec<2>, 3> vertices,
+void triangle(bitmap& image, const array<vec<3>, 3>& vertices,
               uint8 r, uint8 g, uint8 b)
 {
   // define bounding box
