@@ -18,7 +18,7 @@ uint32 mesh::numFaces()
   return (uint32)m_faces.size();
 }
 
-vec<3> mesh::vertice(uint32 index)
+vec3f mesh::vertice(uint32 index)
 {
   return m_vertices[index];
 }
@@ -58,7 +58,7 @@ void mesh::deserialize(istream& stream)
     }
     else if (str == "v")
     {
-      vec<3> vertice;
+      vec3f vertice;
       stream >> vertice[0] >> vertice[1] >> vertice[2];
       m_vertices.push_back(vertice);
     }

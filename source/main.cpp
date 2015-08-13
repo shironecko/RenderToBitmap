@@ -4,12 +4,13 @@
 #include "bitmap.h"
 #include "mesh.h"
 #include "vec.h"
+#include "types.h"
 
 using namespace std;
 
 void line(bitmap& image, int32 x0, int32 y0, int32 x1, int32 y1,
           uint8 r, uint8 g, uint8 b);
-void triangle(bitmap& image, const array<vec<3>, 3>& vertices,
+void triangle(bitmap& image, const array<vec3f, 3>& vertices,
               uint8 r, uint8 g, uint8 b);
 
 int main()
@@ -26,11 +27,11 @@ int main()
     auto face = meshToRender.face(i);
     float lightIntensity = 1.0f;
 
-    array<vec<3>, 3> polygon;
+    array<vec3f, 3> polygon;
 
     for (uint32 j = 0; j < 3; ++j) 
     {
-      vec<3> v0 = meshToRender.vertice(face[j]);
+      vec3f v0 = meshToRender.vertice(face[j]);
 
       int x = (v0[0] + 1.0f) * width / 2.0f;
       int y = (v0[1] + 1.0f) * height / 2.0f;
@@ -42,12 +43,12 @@ int main()
       polygon[j][1] = y;
     }
 
-    array<vec<3>, 3> worldPolygon{ meshToRender.vertice(face[0]),
+    array<vec3f, 3> worldPolygon{ meshToRender.vertice(face[0]),
                                    meshToRender.vertice(face[1]),
                                    meshToRender.vertice(face[2]) };
 
-    vec<3> lightDirection { 0, 0, -1.0f };
-    vec<3> normal = cross(worldPolygon[2] - worldPolygon[0], worldPolygon[1] - worldPolygon[0]).unit();
+    vec3f lightDirection { 0, 0, -1.0f };
+    vec3f normal = cross(worldPolygon[2] - worldPolygon[0], worldPolygon[1] - worldPolygon[0]).unit();
     lightIntensity = dot(lightDirection, normal);
     if (lightIntensity <= 0)
     {
@@ -98,7 +99,7 @@ void line(bitmap& image,
   }
 }
 
-void triangle(bitmap& image, const array<vec<3>, 3>& vertices,
+void triangle(bitmap& image, const array<vec3f, 3>& vertices,
               uint8 r, uint8 g, uint8 b)
 {
   // define bounding box
@@ -119,7 +120,7 @@ void triangle(bitmap& image, const array<vec<3>, 3>& vertices,
   {
     for (float y = yMin; y <= yMax; ++y)
     {
-      vec<3> bc = barycentricCoords<2>(vec<2> { x, y }, vertices);
+      vec3f bc = barycentricCoords<2>(vec2f { x, y }, vertices);
       if (bc[0] < 0 || bc[1] < 0 || bc[2] < 0)
       {
         continue;
