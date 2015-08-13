@@ -26,6 +26,9 @@ public:
 };
 
 template<uint32 N>
+bool equal(const vec<N>& a, const vec<N>& b, float epsilon);
+
+template<uint32 N>
 float dot(const vec<N>& a, const vec<N>& b);
 
 template<uint32 N>
@@ -55,6 +58,20 @@ template<uint32 N>
 bool operator==(const vec<N>& left, const vec<N>& right);
 
 //*****Templates Implementation*****//
+
+template<uint32 N>
+bool equal(const vec<N>& a, const vec<N>& b, float epsilon)
+{
+  for (uint32 i = 0; i < N; ++i)
+  {
+    if (fabs(a[i] - b[i]) > epsilon)
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 template<uint32 N>
 vec<N>::vec()
