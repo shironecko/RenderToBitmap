@@ -169,15 +169,20 @@ void triangle(bitmap& image,
 
       if (bc[0] >= 0 && bc[1] >= 0 && bc[2] >= 0 && z > zbuffer[y][x])
       {
+        vec3f normale = lerp3(bc[0], bc[1], bc[2],
+                              normales[0], normales[1], normales[2]);
+        float lum = dot(normale, vec3f { 0, 0, 1.0f });
+        if (lum < 0)
+        {
+          continue;
+        }
+
         zbuffer[y][x] = z;
 
         vec2f uv = lerp3(bc[0], bc[1], bc[2],
                          uvs[0], uvs[1], uvs[2]);
         color col = texture.getPixel(texture.width() * uv.x(), texture.height() * uv.y());
 
-        vec3f normale = lerp3(bc[0], bc[1], bc[2],
-                              normales[0], normales[1], normales[2]);
-        float lum = dot(normale, vec3f { 0, 0, 1.0f });
 
         image.setPixel(x, y, col.r * lum, col.g * lum, col.b * lum);
       }
