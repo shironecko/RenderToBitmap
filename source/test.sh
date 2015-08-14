@@ -5,5 +5,5 @@ mkdir ../build
 pushd ../build
 cmake ../source && 
 make &&
-./RenderToBitmap < ../data/head.obj | feh --force-aliasing -
+./RenderToBitmap ../data/head.obj ../data/head_diffuse.bmp | feh --force-aliasing -
 popd
