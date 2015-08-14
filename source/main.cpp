@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <cassert>
 #include <limits>
@@ -12,6 +13,7 @@ using namespace std;
 void line(bitmap& image, int32 x0, int32 y0, int32 x1, int32 y1,
           uint8 r, uint8 g, uint8 b);
 void triangle(bitmap& image, 
+              bitmap& texture,
               vector<vector<float>>& zbuffer,
               const vec3<vec3f>& vertices,
               const vec3<vec2f>& uvs,
@@ -24,8 +26,20 @@ T lerp3(float alpha, float beta, float omega, T a, T b, T c)
   return a * alpha + b * beta + c * omega;
 }
 
-int main()
+int main(int argc, char** argv)
 {
+  assert(argc == 3);
+
+  mesh meshToRender;
+  fstream file;
+  file.open(argv[1], ios_base::in);
+  meshToRender.deserialize(file);
+  file.close();
+
+  file.open(argv[2], ios_base::in | ios_base::binary);
+  bitmap texture = bitmap::deserialize(file);
+  file.close();
+
   int width = 700;
   int height = 700;
   int depth = 255;
@@ -38,9 +52,6 @@ int main()
 
     zbuffer.push_back(row);
   }
-
-  mesh meshToRender;
-  meshToRender.deserialize(cin);
 
   for (uint32 i = 0; i < meshToRender.numFaces(); ++i) 
   {
@@ -81,7 +92,7 @@ int main()
       continue;
     }
 
-    triangle(image, zbuffer, polygon, uvs, normales, 255, 255, 255);
+    triangle(image, texture, zbuffer, polygon, uvs, normales, 255, 255, 255);
   }
 
   image.serialize(cout);
@@ -126,6 +137,7 @@ void line(bitmap& image,
 }
 
 void triangle(bitmap& image, 
+              bitmap& texture,
               vector<vector<float>>& zbuffer,
               const vec3<vec3f>& vertices,
               const vec3<vec2f>& uvs,
@@ -159,11 +171,15 @@ void triangle(bitmap& image,
       {
         zbuffer[y][x] = z;
 
+        vec2f uv = lerp3(bc[0], bc[1], bc[2],
+                         uvs[0], uvs[1], uvs[2]);
+        color col = texture.getPixel(texture.width() * uv.x(), texture.height() * uv.y());
+
         vec3f normale = lerp3(bc[0], bc[1], bc[2],
                               normales[0], normales[1], normales[2]);
         float lum = dot(normale, vec3f { 0, 0, 1.0f });
 
-        image.setPixel(x, y, r * lum, g * lum, b * lum);
+        image.setPixel(x, y, col.r * lum, col.g * lum, col.b * lum);
       }
     }
   }
