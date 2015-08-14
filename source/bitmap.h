@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ostream>
+#include <istream>
 #include "types.h"
 
 // Let's make writing this stuff to a file easier for us,
@@ -50,7 +51,13 @@ private:
   uint32 coordsToOffset(uint32 x, uint32 y);
   color* getPixelAtCoords(uint32 x, uint32 y);
 
+  bitmap();
+
 public:
+  static const uint16 FILE_TYPE = ('M' << 8) | 'B';
+
+  bitmap(const bitmap& that) = delete;
+  bitmap(bitmap&& that);
   bitmap(int32 width, int32 height);
   ~bitmap();
 
@@ -61,4 +68,5 @@ public:
   int32 height();
 
   void serialize(std::ostream& stream);
+  static bitmap deserialize(std::istream& stream);
 };

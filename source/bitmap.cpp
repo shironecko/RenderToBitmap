@@ -1,8 +1,24 @@
+#include <cassert>
 #include <ostream>
+#include <istream>
 #include <cstring>
 #include <cstdlib>
 #include "types.h"
 #include "bitmap.h"
+
+bitmap::bitmap()
+  : m_header{}, m_pixels{}, m_imageBytesNum{}, m_pitch{}, m_stride{}
+{ } 
+
+bitmap::bitmap(bitmap&& that)
+{
+  m_header = that.m_header;
+  m_pixels = that.m_pixels;
+  that.m_pixels = nullptr;
+  m_imageBytesNum = that.m_imageBytesNum;
+  m_pitch = that.m_pitch;
+  m_stride = that.m_stride;
+}
 
 bitmap::bitmap(int32 width, int32 height)
 {
@@ -67,11 +83,29 @@ int32 bitmap::height()
 void bitmap::serialize(std::ostream& stream)
 {
   bitmapFileHeader fileHeader{};
-  fileHeader.type = ('M' << 8) | 'B';
+  fileHeader.type = bitmap::FILE_TYPE;
   fileHeader.offBits = sizeof(bitmapFileHeader) + sizeof(bitmapHeader);
   fileHeader.fileSize = fileHeader.offBits + m_imageBytesNum;
 
   stream.write(reinterpret_cast<char*>(&fileHeader), sizeof(fileHeader));
   stream.write(reinterpret_cast<char*>(&m_header), sizeof(m_header));
   stream.write(reinterpret_cast<char*>(m_pixels), m_imageBytesNum);
+}
+
+bitmap bitmap::deserialize(std::istream& stream)
+{
+  bitmapFileHeader fileHeader;
+  stream.read(reinterpret_cast<char*>(&fileHeader), sizeof(fileHeader));
+  assert(fileHeader.type == bitmap::FILE_TYPE);
+
+  bitmapHeader header;
+  stream.read(reinterpret_cast<char*>(&header), sizeof(header));
+  assert(header.bitsPerPixel == 24);
+  assert(header.compression == 0);
+
+  bitmap bmp(header.width, header.height);
+  stream.ignore(fileHeader.offBits - sizeof(fileHeader) - sizeof(header));
+  stream.read(reinterpret_cast<char*>(bmp.m_pixels), bmp.m_imageBytesNum);
+
+  return bmp;
 }
