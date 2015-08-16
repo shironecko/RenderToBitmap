@@ -3,10 +3,11 @@
 #include <algorithm>
 #include <cassert>
 #include <limits>
+#include "types.h"
 #include "bitmap.h"
 #include "mesh.h"
 #include "vec.h"
-#include "types.h"
+#include "matrix.h"
 
 using namespace std;
 
@@ -24,6 +25,34 @@ template<typename T>
 T lerp3(float alpha, float beta, float omega, T a, T b, T c)
 {
   return a * alpha + b * beta + c * omega;
+}
+
+template<typename T>
+T lerp3(vec3f cooficients, T a, T b, T c)
+{
+  return lerp3(cooficients[0], cooficients[1], cooficients[2], a, b, c);
+}
+
+template<uint32 N, typename T>
+T lerp(float coefficients[N], T values[N])
+{
+  T result{ };
+  for (uint32 i = 0; i < N; ++i)
+  {
+    result += values[i] * coefficients[i];
+  }
+}
+
+template<uint32 N, typename T>
+T lerp(vec<N, float> coefficients, vec<N, T> values)
+{
+  T result{ };
+  for (uint32 i = 0; i < N; ++i)
+  {
+    result += values[i] * coefficients[i];
+  }
+
+  return result;
 }
 
 int main(int argc, char** argv)
@@ -80,9 +109,9 @@ int main(int argc, char** argv)
       normales[j] = meshToRender.normale(face[j].n);
     }
 
-    array<vec3f, 3> worldPolygon { meshToRender.vertice(face[0].v),
-                                   meshToRender.vertice(face[1].v),
-                                   meshToRender.vertice(face[2].v) };
+    vec3f worldPolygon[3] { meshToRender.vertice(face[0].v),
+                            meshToRender.vertice(face[1].v),
+                            meshToRender.vertice(face[2].v) };
 
     vec3f lightDirection { 0, 0, -1.0f };
     vec3f normal = cross(worldPolygon[2] - worldPolygon[0], worldPolygon[1] - worldPolygon[0]).unit();
@@ -164,13 +193,11 @@ void triangle(bitmap& image,
     {
       vec3f bc = barycentricCoords<2>(vec2f { x, y }, vertices);
 
-      float z = lerp3(bc[0], bc[1], bc[2],
-                      vertices[0].z(), vertices[1].z(),vertices[2].z());
+      float z = lerp3(bc, vertices[0].z(), vertices[1].z(),vertices[2].z());
 
       if (bc[0] >= 0 && bc[1] >= 0 && bc[2] >= 0 && z > zbuffer[y][x])
       {
-        vec3f normale = lerp3(bc[0], bc[1], bc[2],
-                              normales[0], normales[1], normales[2]);
+        vec3f normale = lerp(bc, normales);
         float lum = dot(normale, vec3f { 0, 0, 1.0f });
         if (lum < 0)
         {
@@ -179,10 +206,8 @@ void triangle(bitmap& image,
 
         zbuffer[y][x] = z;
 
-        vec2f uv = lerp3(bc[0], bc[1], bc[2],
-                         uvs[0], uvs[1], uvs[2]);
+        vec2f uv = lerp(bc, uvs);
         color col = texture.getPixel(texture.width() * uv.x(), texture.height() * uv.y());
-
 
         image.setPixel(x, y, col.r * lum, col.g * lum, col.b * lum);
       }
