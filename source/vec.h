@@ -14,6 +14,14 @@ private:
 public:
   vec() { }
 
+  vec(T fill)
+  {
+    for (uint32 i = 0; i < N; ++i)
+    {
+      (*this)[i] = fill;
+    }
+  }
+
   vec(std::initializer_list<T> il)
   {
     auto ilIterator = il.begin();
@@ -118,11 +126,41 @@ typedef vec<3, int32> vec3i;
 typedef vec<3, uint32> vec3u;
 typedef vec<3, float> vec3f;
 
+typedef vec<4, float> vec4f;
+
 template<typename T>
 using vec2 = vec<2, T>;
 
 template<typename T>
 using vec3 = vec<3, T>;
+
+template<uint32 TNewDim, uint32 TOldDim, typename T>
+vec<TNewDim, T> embed(const vec<TOldDim, T> v, T fill)
+{
+  static_assert(TNewDim > TOldDim,
+                "Can only embed into space with more dimensions.");
+  vec<TNewDim, T> result;
+  for (uint32 i = 0; i < TNewDim; ++i)
+  {
+    result[i] = i < TOldDim ? v[i] : fill;
+  }
+
+  return result;
+}
+
+template<uint32 TNewDim, uint32 TOldDim, typename T>
+vec<TNewDim, T> project(const vec<TOldDim, T> v)
+{
+  static_assert(TNewDim < TOldDim,
+                "Can only project into space with less dimensions.");
+  vec<TNewDim, T> result;
+  for (uint32 i = 0; i < TNewDim; ++i)
+  {
+    result[i] = v[i];
+  }
+  
+  return result;
+}
 
 template<typename T>
 vec3<T> cross(const vec3<T>& a, const vec3<T>& b)
@@ -174,7 +212,7 @@ T triangleArea(vec<N, T> a, vec<N, T> b, vec<N, T> c)
 }
 
 template<uint32 pointN, uint32 triangleN, typename T>
-vec3<T> barycentricCoords(vec<pointN, T> p, const vec3<vec<triangleN, T>>& t)
+vec3f barycentricCoords(vec<pointN, T> p, const vec3<vec<triangleN, T>>& t)
 {
   static_assert(pointN >= 2, "Point dimension count is too low!");
   static_assert(triangleN >= 2, "Triangle dimension count is too low!");
@@ -185,7 +223,7 @@ vec3<T> barycentricCoords(vec<pointN, T> p, const vec3<vec<triangleN, T>>& t)
                 ((t[1][1] - t[2][1])*(t[0][0] - t[2][0]) + (t[2][0] - t[1][0])*(t[0][1] - t[2][1]));
   float gamma = 1.0f - alpha - beta;
 
-  return vec3<T> { alpha, beta, gamma };
+  return vec3f { alpha, beta, gamma };
 }
 
 template<uint32 N, typename T>

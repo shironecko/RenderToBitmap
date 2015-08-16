@@ -8,6 +8,7 @@
 #include "mesh.h"
 #include "vec.h"
 #include "matrix.h"
+#include "utility.h"
 
 using namespace std;
 
@@ -21,39 +22,6 @@ void triangle(bitmap& image,
               const vec3<vec3f>& normales,
               uint8 r, uint8 g, uint8 b);
 
-template<typename T>
-T lerp3(float alpha, float beta, float omega, T a, T b, T c)
-{
-  return a * alpha + b * beta + c * omega;
-}
-
-template<typename T>
-T lerp3(vec3f cooficients, T a, T b, T c)
-{
-  return lerp3(cooficients[0], cooficients[1], cooficients[2], a, b, c);
-}
-
-template<uint32 N, typename T>
-T lerp(float coefficients[N], T values[N])
-{
-  T result{ };
-  for (uint32 i = 0; i < N; ++i)
-  {
-    result += values[i] * coefficients[i];
-  }
-}
-
-template<uint32 N, typename T>
-T lerp(vec<N, float> coefficients, vec<N, T> values)
-{
-  T result{ };
-  for (uint32 i = 0; i < N; ++i)
-  {
-    result += values[i] * coefficients[i];
-  }
-
-  return result;
-}
 
 int main(int argc, char** argv)
 {
@@ -193,7 +161,7 @@ void triangle(bitmap& image,
     {
       vec3f bc = barycentricCoords<2>(vec2f { x, y }, vertices);
 
-      float z = lerp3(bc, vertices[0].z(), vertices[1].z(),vertices[2].z());
+      float z = lerp(bc, vertices[0].z(), vertices[1].z(),vertices[2].z());
 
       if (bc[0] >= 0 && bc[1] >= 0 && bc[2] >= 0 && z > zbuffer[y][x])
       {
