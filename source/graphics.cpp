@@ -60,8 +60,10 @@ void renderFace(uint32 face,
 
       float z = lerp(bc, screenCoords[0].z(),
                      screenCoords[1].z(), screenCoords[2].z());
-      if (z > zbuffer[y * image.height() + x])
+      uint32 zbi = y * image.width() + x;
+      if (z > zbuffer[zbi])
       {
+        zbuffer[zbi] = z; 
         color c = shader.fragment(x, y, bc);
         image.setPixel(x, y, c.r, c.g, c.b);
       }
