@@ -9,6 +9,44 @@
 
 using namespace std;
 
+void line(bitmap& image,
+          int32 x0, int32 y0, int32 x1, int32 y1,
+          uint8 r, uint8 g, uint8 b) 
+{
+  assert(x0 >= 0 && x0 < image.width());
+  assert(x1 >= 0 && x1 < image.width());
+  assert(y0 >= 0 && y0 < image.height());
+  assert(y1 >= 0 && y1 < image.height());
+
+  bool steep = false;
+  if (abs(x0 - x1) < abs(y0 - y1)) 
+  {
+    std::swap(x0, y0);
+    std::swap(x1, y1);
+    steep = true;
+  }
+
+  if (x0>x1) 
+  {
+    std::swap(x0, x1);
+    std::swap(y0, y1);
+  }
+
+  for (int32 x=x0; x<=x1; x++) 
+  {
+    float t = (x - x0) / (float)(x1 - x0);
+    int32 y = y0 * (1.0f - t) + y1 * t;
+    if (steep) 
+    {
+      image.setPixel(y, x, r, g, b);
+    } 
+    else 
+    {
+      image.setPixel(x, y, r, g, b);
+    }
+  }
+}
+
 void renderFace(uint32 face,
                 IShader& shader,
                 bitmap& image,
@@ -31,8 +69,8 @@ void renderFace(uint32 face,
 
   // convert clip space coords to screen space and find AABB of the triangle
   vec3<vec3f> screenCoords; 
-  vec2i minAABB(numeric_limits<int32>::infinity());
-  vec2i maxAABB(-numeric_limits<int32>::infinity());
+  vec2i minAABB(numeric_limits<int32>::max());
+  vec2i maxAABB(-numeric_limits<int32>::min());
 
   for (uint32 i = 0; i < 3; ++i)
   {

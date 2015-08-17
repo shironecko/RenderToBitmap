@@ -3,17 +3,52 @@
 #include <algorithm>
 #include <cassert>
 #include <limits>
+#include <memory>
 #include "types.h"
 #include "bitmap.h"
 #include "mesh.h"
 #include "vec.h"
 #include "matrix.h"
 #include "utility.h"
+#include "graphics.h"
 
 using namespace std;
 
-void line(bitmap& image, int32 x0, int32 y0, int32 x1, int32 y1,
-          uint8 r, uint8 g, uint8 b);
+class Shader : public IShader
+{
+  shared_ptr<mesh> m_mesh;
+  shared_ptr<bitmap> m_diffuse;
+
+  // fragment shader parameters
+  vec3<vec2f> m_uvs;
+
+public:
+  void setMesh(shared_ptr<mesh> m)
+  {
+    m_mesh = m;
+  }
+
+  void setDiffuse(shared_ptr<bitmap> d)
+  {
+    m_diffuse = d;
+  }
+
+  virtual vec3f vertex(uint32 face, uint32 vert) override
+  {
+    auto f = m_mesh->face(face);
+    m_uvs[vert] = m_mesh->uv(f[vert].uv);
+    return m_mesh->vertice(f[vert].v);
+  }
+
+  virtual color fragment(uint32 x, uint32 y, vec3f bc) override
+  {
+    vec2f uv = lerp(bc, m_uvs);
+    color fc = m_diffuse->getPixel(m_diffuse->width() * uv.x(), m_diffuse->height() * uv.y());
+
+    return fc;
+  }
+};
+
 void triangle(bitmap& image, 
               bitmap& texture,
               vector<vector<float>>& zbuffer,
@@ -27,111 +62,35 @@ int main(int argc, char** argv)
 {
   assert(argc == 3);
 
-  mesh meshToRender;
+  auto meshToRender = make_shared<mesh>();
   fstream file;
   file.open(argv[1], ios_base::in);
-  meshToRender.deserialize(file);
+  meshToRender->deserialize(file);
   file.close();
 
   file.open(argv[2], ios_base::in | ios_base::binary);
-  bitmap texture = bitmap::deserialize(file);
+  auto diffuse = make_shared<bitmap>(bitmap::deserialize(file));
   file.close();
 
   int width = 700;
   int height = 700;
   int depth = 255;
   bitmap image(width, height);
-  vector<vector<float>> zbuffer;
-  for (uint32 y = 0; y < height; ++y)
+  vector<float> zbuffer;
+  zbuffer.insert(zbuffer.begin(), width * height, -numeric_limits<float>::infinity());
+
+  Shader shader;
+  shader.setMesh(meshToRender);
+  shader.setDiffuse(diffuse);
+
+  for (uint32 face = 0; face < meshToRender->numFaces(); ++face) 
   {
-    vector<float> row(width);
-    row.insert(row.begin(), width, -numeric_limits<float>::infinity());
-
-    zbuffer.push_back(row);
-  }
-
-  for (uint32 i = 0; i < meshToRender.numFaces(); ++i) 
-  {
-    auto face = meshToRender.face(i);
-
-    vec3<vec3f> polygon;
-    vec3<vec2f> uvs;
-    vec3<vec3f> normales;
-
-    for (uint32 j = 0; j < 3; ++j) 
-    {
-      vec3f v0 = meshToRender.vertice(face[j].v);
-
-      int x = (v0.x() + 1.0f) * width / 2.0f;
-      int y = (v0.y() + 1.0f) * height / 2.0f;
-      int z = (v0.z() + 1.0f) * depth / 2.0f;
-
-      if (x >= width) x = width - 1;
-      if (y >= height) y = height - 1;
-
-      polygon[j].x() = x;
-      polygon[j].y() = y;
-      polygon[j].z() = z;
-
-      uvs[j] = meshToRender.uv(face[j].uv);
-      normales[j] = meshToRender.normale(face[j].n);
-    }
-
-    vec3f worldPolygon[3] { meshToRender.vertice(face[0].v),
-                            meshToRender.vertice(face[1].v),
-                            meshToRender.vertice(face[2].v) };
-
-    vec3f lightDirection { 0, 0, -1.0f };
-    vec3f normal = cross(worldPolygon[2] - worldPolygon[0], worldPolygon[1] - worldPolygon[0]).unit();
-    float lit = dot(lightDirection, normal);
-    if (lit <= 0)
-    {
-      continue;
-    }
-
-    triangle(image, texture, zbuffer, polygon, uvs, normales, 255, 255, 255);
+    renderFace(face, shader, image, zbuffer);
   }
 
   image.serialize(cout);
 }
 
-void line(bitmap& image,
-          int32 x0, int32 y0, int32 x1, int32 y1,
-          uint8 r, uint8 g, uint8 b) 
-{
-  assert(x0 >= 0 && x0 < image.width());
-  assert(x1 >= 0 && x1 < image.width());
-  assert(y0 >= 0 && y0 < image.height());
-  assert(y1 >= 0 && y1 < image.height());
-
-  bool steep = false;
-  if (abs(x0 - x1) < abs(y0 - y1)) 
-  {
-    std::swap(x0, y0);
-    std::swap(x1, y1);
-    steep = true;
-  }
-
-  if (x0>x1) 
-  {
-    std::swap(x0, x1);
-    std::swap(y0, y1);
-  }
-
-  for (int32 x=x0; x<=x1; x++) 
-  {
-    float t = (x - x0) / (float)(x1 - x0);
-    int32 y = y0 * (1.0f - t) + y1 * t;
-    if (steep) 
-    {
-      image.setPixel(y, x, r, g, b);
-    } 
-    else 
-    {
-      image.setPixel(x, y, r, g, b);
-    }
-  }
-}
 
 void triangle(bitmap& image, 
               bitmap& texture,
