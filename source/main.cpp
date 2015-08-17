@@ -19,6 +19,10 @@ class Shader : public IShader
   shared_ptr<mesh> m_mesh;
   shared_ptr<bitmap> m_diffuse;
 
+  mat4x4f m_world;
+  mat4x4f m_view;
+  mat4x4f m_projection;
+
   // fragment shader parameters
   vec3<vec2f> m_uvs;
 
@@ -33,11 +37,27 @@ public:
     m_diffuse = d;
   }
 
+  void setWorld(mat4x4f world)
+  {
+    m_world = world;
+  }
+
+  void setView(mat4x4f view)
+  {
+    m_view = view;
+  }
+
+  void setProjection(mat4x4f projection)
+  {
+    m_projection = projection;
+  }
+
   virtual vec3f vertex(uint32 face, uint32 vert) override
   {
     auto f = m_mesh->face(face);
     m_uvs[vert] = m_mesh->uv(f[vert].uv);
-    return m_mesh->vertice(f[vert].v);
+    vec3f v = m_mesh->vertice(f[vert].v);
+    return project<3>(m_projection * m_view * m_world * embed<4>(v, 1.0f));
   }
 
   virtual color fragment(uint32 x, uint32 y, vec3f bc) override
@@ -73,6 +93,15 @@ int main(int argc, char** argv)
   Shader shader;
   shader.setMesh(meshToRender);
   shader.setDiffuse(diffuse);
+
+  mat4x4f world = mat4x4f::identity();
+  shader.setWorld(world);
+
+  mat4x4f view = mat4x4f::identity();
+  shader.setView(view);
+
+  mat4x4f projection = mat4x4f::identity();
+  shader.setProjection(projection);
 
   for (uint32 face = 0; face < meshToRender->numFaces(); ++face) 
   {
