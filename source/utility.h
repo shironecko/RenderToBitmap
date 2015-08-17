@@ -28,7 +28,7 @@ T lerp(float coefficients[N], T values[N])
 template<uint32 N, typename T>
 T lerp(vec<N, float> coefficients, vec<N, T> values)
 {
-  T result{ };
+  T result{0};
   for (uint32 i = 0; i < N; ++i)
   {
     result += values[i] * coefficients[i];
