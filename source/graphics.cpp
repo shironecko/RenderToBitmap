@@ -79,7 +79,8 @@ void renderFace(uint32 face,
     for (uint32 j = 0; j < 2; ++j)
     {
       minAABB[j] = min(minAABB[j], int32(screenCoords[i][j]));
-      maxAABB[j] = max(maxAABB[j], int32(screenCoords[i][j]));
+      // add 1.0f to maxAABB to fully cover the triangle and remove all gaps
+      maxAABB[j] = max(maxAABB[j], int32(screenCoords[i][j] + 1.0f));
     }
   }
 
