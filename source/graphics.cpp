@@ -116,21 +116,11 @@ mat4x4f lookAt(vec3f eye, vec3f up, vec3f target)
   vec3f xaxis = cross(up, zaxis).unit();
   vec3f yaxis = cross(zaxis, xaxis);
 
-  mat4x4f orientation
+  return mat4x4f
   {
-    { xaxis.x(), xaxis.y(), xaxis.z(), 0 },
-    { yaxis.x(), yaxis.y(), yaxis.z(), 0 },
-    { zaxis.x(), zaxis.y(), zaxis.z(), 0 },
-    {         0,         0,         0, 1 }
+    { xaxis.x(), xaxis.y(), xaxis.z(), -dot(eye, xaxis) },
+    { yaxis.x(), yaxis.y(), yaxis.z(), -dot(eye, yaxis) },
+    { zaxis.x(), zaxis.y(), zaxis.z(), -dot(eye, zaxis) },
+    {         0,         0,         0,        1 }
   };
-
-  mat4x4f translation
-  {
-    { 1, 0, 0, -eye.x() },
-    { 0, 1, 0, -eye.y() },
-    { 0, 0, 1, -eye.z() },
-    { 0, 0, 0, 1        }
-  };
-
-  return orientation * translation;
 }
