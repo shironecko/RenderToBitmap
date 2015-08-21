@@ -39,6 +39,11 @@ public:
     }
   }
 
+  static vec<N, T> zero()
+  {
+    return vec<N, T>{ };
+  }
+
   T& operator [] (uint32 i)
   {
     assert(i < N);

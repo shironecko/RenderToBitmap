@@ -97,7 +97,10 @@ int main(int argc, char** argv)
   mat4x4f world = mat4x4f::identity();
   shader.setWorld(world);
 
-  mat4x4f view = mat4x4f::identity();
+  vec3f eye    { 1.0f, 0.5f, 1.0f };
+  vec3f up     {    0, 1.0f,    0 };
+  vec3f target {    0,    0,    0 };
+  mat4x4f view = lookAt(eye, up, target);
   shader.setView(view);
 
   mat4x4f projection = mat4x4f::identity();

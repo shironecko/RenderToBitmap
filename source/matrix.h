@@ -13,6 +13,23 @@ class matrix
 public:
   matrix() { }
 
+  matrix(std::initializer_list<vec<TWidth, T>> il)
+  {
+    auto ilIterator = il.begin();
+    for (uint32 i = 0; i < THeight; ++i)
+    {
+      if (ilIterator != il.end())
+      {
+        (*this)[i] = *ilIterator;
+        ++ilIterator;
+      }
+      else
+      {
+        (*this)[i] = vec<TWidth, T>::zero();
+      }
+    }
+  }
+
   vec<TWidth, T>& operator[] (uint32 index)
   {
     assert(index < THeight);
