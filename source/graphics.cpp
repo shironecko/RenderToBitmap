@@ -52,7 +52,7 @@ void renderFace(uint32 face,
                 bitmap& image,
                 std::vector<float>& zbuffer)
 {
-  vec3<vec3f> clipCoords;
+  vec3<vec4f> clipCoords;
   for (uint32 i = 0; i < 3; ++i)
   {
     clipCoords[i] = shader.vertex(face, i);
@@ -74,7 +74,7 @@ void renderFace(uint32 face,
 
   for (uint32 i = 0; i < 3; ++i)
   {
-    screenCoords[i] = project<3>(screenSpace * embed<4>(clipCoords[i], 1.0f));
+    screenCoords[i] = project(screenSpace * clipCoords[i]);
 
     for (uint32 j = 0; j < 2; ++j)
     {
@@ -110,17 +110,3 @@ void renderFace(uint32 face,
   }
 }
 
-mat4x4f lookAt(vec3f eye, vec3f up, vec3f target)
-{
-  vec3f zaxis = (eye - target).unit();
-  vec3f xaxis = cross(up, zaxis).unit();
-  vec3f yaxis = cross(zaxis, xaxis);
-
-  return mat4x4f
-  {
-    { xaxis.x(), xaxis.y(), xaxis.z(), -dot(eye, xaxis) },
-    { yaxis.x(), yaxis.y(), yaxis.z(), -dot(eye, yaxis) },
-    { zaxis.x(), zaxis.y(), zaxis.z(), -dot(eye, zaxis) },
-    {         0,         0,         0,        1 }
-  };
-}

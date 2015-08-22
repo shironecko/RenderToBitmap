@@ -80,6 +80,12 @@ public:
 
 typedef matrix<4, 4, float> mat4x4f;
 
+mat4x4f translation(float x, float y, float z);
+mat4x4f scale(float x, float y, float z);
+mat4x4f scale(float s);
+mat4x4f lookAt(vec3f eye, vec3f up, vec3f target);
+mat4x4f projection(float fov, float near, float far);
+
 template <uint32 TDim, typename T>
 vec<TDim, T> operator *(const matrix<TDim, TDim, T>& mat,
                         const vec<TDim, T>& v)

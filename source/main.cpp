@@ -52,12 +52,12 @@ public:
     m_projection = projection;
   }
 
-  virtual vec3f vertex(uint32 face, uint32 vert) override
+  virtual vec4f vertex(uint32 face, uint32 vert) override
   {
     auto f = m_mesh->face(face);
     m_uvs[vert] = m_mesh->uv(f[vert].uv);
     vec3f v = m_mesh->vertice(f[vert].v);
-    return project<3>(m_projection * m_view * m_world * embed<4>(v, 1.0f));
+    return m_projection * m_view * m_world * embed<4>(v, 1.0f);
   }
 
   virtual color fragment(uint32 x, uint32 y, vec3f bc) override
@@ -94,17 +94,17 @@ int main(int argc, char** argv)
   shader.setMesh(meshToRender);
   shader.setDiffuse(diffuse);
 
-  mat4x4f world = mat4x4f::identity();
+  mat4x4f world = scale(15.0f);
   shader.setWorld(world);
 
-  vec3f eye    { 1.0f, 0.5f, 1.0f };
-  vec3f up     {    0, 1.0f,    0 };
-  vec3f target {    0,    0,    0 };
+  vec3f eye    { 0,    0, 20.0f };
+  vec3f up     { 0, -1.0f,    0 };
+  vec3f target { 0,    0,    0 };
   mat4x4f view = lookAt(eye, up, target);
   shader.setView(view);
 
-  mat4x4f projection = mat4x4f::identity();
-  shader.setProjection(projection);
+  mat4x4f proj = projection(90.0f, 1.0f, 100.0f);
+  shader.setProjection(proj);
 
   for (uint32 face = 0; face < meshToRender->numFaces(); ++face) 
   {

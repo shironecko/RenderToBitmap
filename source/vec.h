@@ -58,38 +58,50 @@ public:
 
   T& x()
   {
-    static_assert(N == 2 || N == 3, "The x() method is defined only for vectors of size 2 or 3!");
+    static_assert(N >= 2 || N <= 4, "The x() method is defined only for vectors of size 2 to 4!");
     return (*this)[0];
   }
 
   T x() const
   {
-    static_assert(N == 2 || N == 3, "The x() method is defined only for vectors of size 2 or 3!");
+    static_assert(N >= 2 || N <= 4, "The x() method is defined only for vectors of size 2 to 4!");
     return (*this)[0];
   }
 
   T& y()
   {
-    static_assert(N == 2 || N == 3, "The y() method is defined only for vectors of size 2 or 3!");
+    static_assert(N >= 2 || N <= 4, "The y() method is defined only for vectors of size 2 to 4!");
     return (*this)[1];
   }
 
   T y() const
   {
-    static_assert(N == 2 || N == 3, "The y() method is defined only for vectors of size 2 or 3!");
+    static_assert(N >= 2 || N <= 4, "The y() method is defined only for vectors of size 2 to 4!");
     return (*this)[1];
   }
 
   T& z()
   {
-    static_assert(N == 3, "The z() method is defined only for vectors of size 3!");
+    static_assert(N >= 3 && N <= 4, "The z() method is defined only for vectors of size 3 and 4!");
     return (*this)[2];
   }
 
   T z() const
   {
-    static_assert(N == 3, "The z() method is defined only for vectors of size 3!");
+    static_assert(N >= 3 && N <= 4, "The z() method is defined only for vectors of size 3 and 4!");
     return (*this)[2];
+  }
+
+  T& w()
+  {
+    static_assert(N == 4, "The w() method is defined only for vectors of size 4!");
+    return (*this)[3];
+  }
+
+  T w() const
+  {
+    static_assert(N == 4, "The z() method is defined only for vectors of size 4!");
+    return (*this)[3];
   }
 
   T sqrLength() const
@@ -153,6 +165,7 @@ vec<TNewDim, T> embed(const vec<TOldDim, T> v, T fill)
   return result;
 }
 
+/*
 template<uint32 TNewDim, uint32 TOldDim, typename T>
 vec<TNewDim, T> project(const vec<TOldDim, T> v)
 {
@@ -165,6 +178,18 @@ vec<TNewDim, T> project(const vec<TOldDim, T> v)
   }
   
   return result;
+}
+*/
+
+template<typename T>
+vec<3, T> project(const vec<4, T>& v)
+{
+  return vec<3, T>
+  {
+    v.x() / v.w(),
+    v.y() / v.w(),
+    v.z() / v.w()
+  };
 }
 
 template<typename T>
