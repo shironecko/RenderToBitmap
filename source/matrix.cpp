@@ -46,19 +46,18 @@ mat4x4f lookAt(vec3f eye, vec3f up, vec3f target)
 
 mat4x4f projection(float fov, float near, float far)
 {
-  mat4x4f p = mat4x4f::identity();
-
   // field of view
   float s = 1.0f / tan(fov * float(M_PI) / 360.0f);
-  p[0][0] = p[1][1] = s;
-
-  // perspective divide
-  p[3][2] = 1.0f;
-  p[3][3] = 0;
 
   // map z to [0, 1]
-  p[2][2] = -(far / (far - near));
-  p[2][3] = -(far * near / (far - near));
+  float zz = -far / (far - near);
+  float zw = -far * near / (far - near);
 
-  return p;
+  return mat4x4f
+  {
+    { s,     0,     0,     0 },
+    { 0,     s,     0,     0 },
+    { 0,     0,    zz,    zw },
+    { 0,     0, -1.0f,     0 }
+  };
 }

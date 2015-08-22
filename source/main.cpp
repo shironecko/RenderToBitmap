@@ -88,22 +88,23 @@ int main(int argc, char** argv)
   int height = 700;
   bitmap image(width, height);
   vector<float> zbuffer;
-  zbuffer.insert(zbuffer.begin(), width * height, -numeric_limits<float>::infinity());
+  zbuffer.insert(zbuffer.begin(), width * height, numeric_limits<float>::infinity());
 
   Shader shader;
   shader.setMesh(meshToRender);
   shader.setDiffuse(diffuse);
 
-  mat4x4f world = scale(15.0f);
+  mat4x4f world = mat4x4f::identity();
   shader.setWorld(world);
 
-  vec3f eye    { 0,    0, 20.0f };
-  vec3f up     { 0, -1.0f,    0 };
-  vec3f target { 0,    0,    0 };
+  vec3f eye    { 0, 0, 3 };
+  vec3f up     { 0, 1, 0 };
+  vec3f target { 0, 0, 0 };
   mat4x4f view = lookAt(eye, up, target);
   shader.setView(view);
 
-  mat4x4f proj = projection(90.0f, 1.0f, 100.0f);
+  mat4x4f proj = projection(45, 0.3f, 1000);
+  //mat4x4f proj = mat4x4f::identity();
   shader.setProjection(proj);
 
   for (uint32 face = 0; face < meshToRender->numFaces(); ++face) 
