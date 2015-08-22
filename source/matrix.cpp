@@ -48,6 +48,10 @@ mat4x4f projection(float fov, float near, float far)
 {
   mat4x4f p = mat4x4f::identity();
 
+  // field of view
+  float s = 1.0f / tan(fov * float(M_PI) / 360.0f);
+  p[0][0] = p[1][1] = s;
+
   // perspective divide
   p[3][2] = 1.0f;
   p[3][3] = 0;
