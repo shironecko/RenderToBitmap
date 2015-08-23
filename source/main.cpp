@@ -21,7 +21,8 @@ class Shader : public IShader
 
   mat4x4f m_world;
   mat4x4f m_view;
-  mat4x4f m_projection;
+  mat4x4f m_proj;
+  mat4x4f m_modelToClip;
 
   // fragment shader parameters
   vec3<vec2f> m_uvs;
@@ -37,19 +38,12 @@ public:
     m_diffuse = d;
   }
 
-  void setWorld(mat4x4f world)
+  void setMatrices(mat4x4f world, mat4x4f view, mat4x4f proj)
   {
     m_world = world;
-  }
-
-  void setView(mat4x4f view)
-  {
-    m_view = view;
-  }
-
-  void setProjection(mat4x4f projection)
-  {
-    m_projection = projection;
+    m_view  = view;
+    m_proj  = proj;
+    m_modelToClip = m_proj * m_view * m_world ;
   }
 
   virtual vec4f vertex(uint32 face, uint32 vert) override
@@ -57,7 +51,7 @@ public:
     auto f = m_mesh->face(face);
     m_uvs[vert] = m_mesh->uv(f[vert].uv);
     vec3f v = m_mesh->vertice(f[vert].v);
-    return m_projection * m_view * m_world * embed<4>(v, 1.0f);
+    return m_modelToClip * embed<4>(v, 1.0f);
   }
 
   virtual color fragment(uint32 x, uint32 y, vec3f bc) override
@@ -95,17 +89,12 @@ int main(int argc, char** argv)
   shader.setDiffuse(diffuse);
 
   mat4x4f world = mat4x4f::identity();
-  shader.setWorld(world);
-
   vec3f eye    { 0, 0, 3 };
   vec3f up     { 0, 1, 0 };
   vec3f target { 0, 0, 0 };
   mat4x4f view = lookAt(eye, up, target);
-  shader.setView(view);
-
   mat4x4f proj = projection(45, float(width) / height, 0.3f, 1000);
-  //mat4x4f proj = mat4x4f::identity();
-  shader.setProjection(proj);
+  shader.setMatrices(world, view, proj);
 
   for (uint32 face = 0; face < meshToRender->numFaces(); ++face) 
   {
