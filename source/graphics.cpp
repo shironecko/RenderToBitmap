@@ -47,6 +47,15 @@ void line(bitmap& image,
   }
 }
 
+template<uint32 N, typename T>
+bool clockwise(vec<N, T> a, vec<N, T> b, vec<N, T> c)
+{
+  static_assert(N >= 2, "Need ad least vec<2, T> to compute!");
+  float s = -b.x() * a.y() + c.x() * a.y() + a.x() * b.y() - 
+             c.x() * b.y() - a.x() * c.y() + b.x() * c.y();
+  return s < 0;
+}
+
 void renderFace(uint32 face,
                 IShader& shader,
                 bitmap& image,
@@ -56,6 +65,13 @@ void renderFace(uint32 face,
   for (uint32 i = 0; i < 3; ++i)
   {
     clipCoords[i] = shader.vertex(face, i);
+  }
+
+  // back-face culling
+  // NOTE: should I do this in clip or screen space?
+  if (clockwise(clipCoords[0], clipCoords[1], clipCoords[2]))
+  {
+    return;
   }
 
   // define clip to screen space transformation matrix
@@ -101,10 +117,6 @@ void renderFace(uint32 face,
   {
     for (int32 x = minAABB.x(); x < maxAABB.x(); ++x)
     {
-      // TODO: handle this case as opengl, by splitting half-visible triangles
-      if (x < 0 || x >= image.width() || y < 0 || y >= image.height())
-        continue;
-
       vec3f bc = barycentricCoords(vec2f{ float(x), float(y) }, screenCoords);
       if (bc.x() < 0 || bc.y() < 0 || bc.z() < 0)
         continue;
