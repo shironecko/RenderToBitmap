@@ -59,13 +59,15 @@ void renderFace(uint32 face,
   }
 
   // define clip to screen space transformation matrix
-  mat4x4f screenSpace = mat4x4f::identity();
-  float halfWidth     = image.width()  * 0.5f;
-  float halfHeight    = image.height() * 0.5f;
-  screenSpace[0][0]   = halfWidth;
-  screenSpace[0][3]   = halfWidth  + 0.5f;
-  screenSpace[1][1]   = halfHeight;
-  screenSpace[1][3]   = halfHeight + 0.5f;
+  float hw = image.width()  * 0.5f;
+  float hh = image.height() * 0.5f;
+  mat4x4f screenSpace
+  {
+    { hw,   0,   0, hw + 0.5f },
+    {  0,  hh,   0, hh + 0.5f },
+    {  0,   0,   1,         0 },
+    {  0,   0,   0,         1 }
+  };
 
   // convert clip space coords to screen space and find AABB of the triangle
   vec3<vec3f> screenCoords; 
@@ -74,6 +76,16 @@ void renderFace(uint32 face,
 
   for (uint32 i = 0; i < 3; ++i)
   {
+    // very basic clipping
+    for (uint32 j = 0; j < 3; ++j)
+    {
+      if (clipCoords[i][j] >  clipCoords[i].w() ||
+          clipCoords[i][j] < -clipCoords[i].w())
+      {
+        return;
+      }
+    }
+
     screenCoords[i] = project(screenSpace * clipCoords[i]);
 
     for (uint32 j = 0; j < 2; ++j)
