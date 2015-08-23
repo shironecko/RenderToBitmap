@@ -84,8 +84,8 @@ int main(int argc, char** argv)
   auto diffuse = make_shared<bitmap>(bitmap::deserialize(file));
   file.close();
 
-  int width = 700;
-  int height = 700;
+  int width = 500;
+  int height = 500;
   bitmap image(width, height);
   vector<float> zbuffer;
   zbuffer.insert(zbuffer.begin(), width * height, numeric_limits<float>::infinity());
@@ -103,7 +103,7 @@ int main(int argc, char** argv)
   mat4x4f view = lookAt(eye, up, target);
   shader.setView(view);
 
-  mat4x4f proj = projection(45, 0.3f, 1000);
+  mat4x4f proj = projection(45, float(width) / height, 0.3f, 1000);
   //mat4x4f proj = mat4x4f::identity();
   shader.setProjection(proj);
 
