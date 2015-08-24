@@ -152,7 +152,7 @@ template<typename T>
 using vec3 = vec<3, T>;
 
 template<uint32 TNewDim, uint32 TOldDim, typename T>
-vec<TNewDim, T> embed(const vec<TOldDim, T> v, T fill)
+vec<TNewDim, T> embed(const vec<TOldDim, T> v, T fill = static_cast<T>(1))
 {
   static_assert(TNewDim > TOldDim,
                 "Can only embed into space with more dimensions.");
@@ -164,22 +164,6 @@ vec<TNewDim, T> embed(const vec<TOldDim, T> v, T fill)
 
   return result;
 }
-
-/*
-template<uint32 TNewDim, uint32 TOldDim, typename T>
-vec<TNewDim, T> project(const vec<TOldDim, T> v)
-{
-  static_assert(TNewDim < TOldDim,
-                "Can only project into space with less dimensions.");
-  vec<TNewDim, T> result;
-  for (uint32 i = 0; i < TNewDim; ++i)
-  {
-    result[i] = v[i];
-  }
-  
-  return result;
-}
-*/
 
 template<typename T>
 vec<3, T> project(const vec<4, T>& v)
