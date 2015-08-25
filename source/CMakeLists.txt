@@ -19,7 +19,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${AdditionalFlags}")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${AdditionalFlags} ${AdditionalDebugFlags}")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${AdditionalFlags}")
 
-set(SourceFiles main.cpp bitmap.cpp mesh.cpp vec.cpp matrix.cpp graphics.cpp)
-set(HeaderFiles types.h bitmap.h mesh.h vec.h matrix.h graphics.h utility.h)
+set(SourceFiles main.cpp bitmap.cpp mesh.cpp vec.cpp matrix.cpp graphics.cpp texture.cpp)
+set(HeaderFiles types.h bitmap.h mesh.h vec.h matrix.h graphics.h utility.h texture.h)
 
 add_executable(RenderToBitmap ${SourceFiles} ${HeaderFiles})
