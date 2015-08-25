@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/shiro/projects/renderToBitmap/source/math/matrix.cpp
+types.h
+/home/shiro/projects/renderToBitmap/source/math/types.h
+vec.h
+/home/shiro/projects/renderToBitmap/source/math/vec.h
+matrix.h
+/home/shiro/projects/renderToBitmap/source/math/matrix.h
+
+/home/shiro/projects/renderToBitmap/source/math/matrix.h
+cmath
+-
+cassert
+-
+types.h
+/home/shiro/projects/renderToBitmap/source/math/types.h
+vec.h
+/home/shiro/projects/renderToBitmap/source/math/vec.h
+
+/home/shiro/projects/renderToBitmap/source/math/types.h
+cstdint
+-
+
+/home/shiro/projects/renderToBitmap/source/math/vec.cpp
+vec.h
+/home/shiro/projects/renderToBitmap/source/math/vec.h
+
+/home/shiro/projects/renderToBitmap/source/math/vec.h
+cmath
+-
+cassert
+-
+array
+-
+types.h
+/home/shiro/projects/renderToBitmap/source/math/types.h
+

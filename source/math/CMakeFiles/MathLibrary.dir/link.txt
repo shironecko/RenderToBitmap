@@ -1,0 +1,2 @@
+/usr/bin/ar cr libMathLibrary.a  CMakeFiles/MathLibrary.dir/vec.cpp.o CMakeFiles/MathLibrary.dir/matrix.cpp.o
+/usr/bin/ranlib libMathLibrary.a

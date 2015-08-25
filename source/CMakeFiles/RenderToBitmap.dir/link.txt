@@ -1,0 +1,1 @@
+/usr/bin/clang++       CMakeFiles/RenderToBitmap.dir/main.cpp.o CMakeFiles/RenderToBitmap.dir/bitmap.cpp.o CMakeFiles/RenderToBitmap.dir/mesh.cpp.o CMakeFiles/RenderToBitmap.dir/graphics.cpp.o  -o RenderToBitmap -rdynamic math/libMathLibrary.a 

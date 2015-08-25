@@ -1,0 +1,2 @@
+/home/shiro/projects/renderToBitmap/source/math/CMakeFiles/MathLibrary.dir
+/home/shiro/projects/renderToBitmap/source/CMakeFiles/RenderToBitmap.dir
